@@ -1,0 +1,128 @@
+
+Virtual Memory Management
+Authored by sagi ben shushan
+209351147
+
+==Description for EX5 ==
+In this exercise we will perform a simulation of the CPU approaches to memory.
+We use the paging mechanism that allows programs to be run when only part of it is in memory.
+The program memory, also called virtual memory, is divided into pages that respond to the main memory as needed.
+We will perform a virtual memory of a computer with up to two programs that can run simultaneously.
+The main function of the exercise will consist of a sequence of store and load commands at random.
+The main function of the exercise will consist of a sequence of store and load commands at random.
+
+
+==Description for files ==
+
+exe_file_name1[] - this file is string, this is the name of the first process.
+
+exe_file_name2[] - this file is string, this is the name of the second process.
+
+swap_file_name[] - this file is string.
+
+
+==Description for DB ==
+
+main memory[200]- is an array that represents the RAM in the simulation.
+
+page table- the page_descriptor make pointer on the page table, if there is 2 process so there is 2 pointers to 2 page table each one for procees. The page table is in size of NUM_OF_PAGES. The page table will return to us for the page we found what the appropriate frame is. the page descriptor is a struct that help us in the program to understand all time in which case we are staying.
+
+
+==functions for EX5==
+
+char load(int process_id, int address);
+-Receives a logical address that needs to be accessed for the purpose of reading a data.
+The main idea of the function is to make sure that the relevant page of the requested process is in the main memory.
+The function checks all the conditions in order to understand where the address is in memory and acts as required by it, does not change the text, does not access unallocated memory, etc.
+Return the character found at the requested address.
+
+
+
+
+void store(int process_id, int address, char value);
+-Receives a logical address that needs to be accessed for the purpose of writing a data.
+Similar to the load function the store function have to make sure that the relevant page of the requested process is in the main memory.
+The function checks all the conditions in order to understand where the address is in memory and acts as required by it, does not change the text.
+
+
+
+
+
+
+void print_memory(); 
+- The function will print its memory contents
+
+
+void print_swap ();
+- The function prints the contents of a swap file
+
+
+void print_page_table();
+- The function will print the page tables
+
+
+
+int fromExec(int process_id, int pageNum);
+-The function update the frame var, read from the exec files to the main memory.
+update the page table attributes(valid = 1 and frame = frame var). Plus 1 to counretOPagesInRam(count every page that got into the main memory).
+return the frame var(show the page number in the main memory of the adress).
+
+
+
+
+void memoryIsFull(int process_id);
+-When the main memory is full, the function find the next page that we have to remove to the swap file,check if this page is dirty. If this page is dirty there is calling for checkAvialibleInSwap function that return the index in swap file Which is where we will remove the page.
+Now there is empty place in the RAM for the requested command.
+The function update the frame var and the Store and load function who call this function know where to load or store in the RAM.
+Update the page table attributes(valid and frame)
+
+
+
+
+int checkAvialibleInSwap();
+-When the main memory is full and we need to move page from the RAM, the function check in which index in swap file is avialible and empty to remove this page there.
+return the the page number(in memory is full function we Multiply the return value by page size and get the index in swap file).
+
+
+
+void bringFromSwap(int process_id, int pageNum);
+-In case there are write permissions this is a type of page ... so we check if the page is dirty which means that a store command was executed on the address of this page so we will bring the page from the swap file.
+Calculate the latest frame, read from the swap file from the swap index as start index to the main memory and than write to the swap file in swap_index page size zeros.
+update the page table attributes(swap index, valid and frame)
+
+
+int isData(int address);
+-Returns us in which area we are staying, We want the address to be larger than the text size and smaller than the data size and so we will understand that we are in data area.
+
+
+int isBss(int address);
+-Returns us in which area we are staying, We want the address to be larger than the text size + data size and smaller than the bss size and so we will understand that we are in bss area.(only the load call to this function)
+
+
+void initNewPage(int process_id, int pageNum);
+-In load function:if its bss area, init new page that full of zeros(page size of zeros), if stack/heap print ERROR(it is like read from the memory before we make malloc).
+-In store function: if bss/heap/stack area,init new page that full of zeros(page size of zeros).
+
+
+
+//////////////////////////////////////////////////////////
+
+
+
+==Program Files==
+main.cpp, sim_mem.cpp, sim_mem.h
+
+==How to compile EX5?==
+compile: g++ main.cpp sim_mem.cpp -o main
+run: ./main
+
+===Input:==
+NO INPUT
+
+==Output:==
+The return value(load), physical memory, swap memory, page table of process and ERROR if(V=0, P=1, D=1 and its heap/stack areae in command load / P=0 so there is no premission- it's text area).
+
+
+
+
+
